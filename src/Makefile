@@ -4,16 +4,16 @@ CXXFLAGS = -Wall -Werror -Wextra -pedantic -std=c++17 -g -fsanitize=address -I$(
 LDFLAGS =  -fsanitize=address
 
 
-LBLIBS = FileReader.h
+LBLIBS = FileReader.h FAT.h Ext2.h
 
-SRC = FileReader.cc Main.cc
+SRC = FileReader.cc FAT.cc Ext2.cc Main.cc
 OBJ = $(SRC:.cc=.o)
 EXEC = Main
 
 all: $(EXEC)
 
 $(EXEC): $(OBJ)
-	$(CXX) $(LDFLAGS) -o $@ $(OBJ) $(DIR)$(LBLIBS)
+	$(CXX) $(LDFLAGS) -o $@ $(OBJ) $($(DIR)LBLIBS)
 
 clean:
 	rm -rf $(OBJ) $(EXEC)
