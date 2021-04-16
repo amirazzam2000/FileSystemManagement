@@ -1,4 +1,5 @@
 #include "FileReader.h"
+#include <time.h>
 
 using namespace std;
 
@@ -44,6 +45,9 @@ void FileReader::checkFATorEXT() // for thr ext2 check the magic paramater end o
         {
             this->parseExtData();
             this->displayExtDetails();
+        }
+        else{
+            cout << "File system is neither EXT2 nor FAT16." <<endl;
         }
     }
 
@@ -233,9 +237,12 @@ void FileReader::displayExtDetails(){
     */
     cout << endl << "INFO VOLUME" << endl;
     cout << "Volume name: " << this->ext.getVolumeName() << endl;
-    cout << "Last check: " << this->ext.getLastcheck() << endl;
-    cout << "Last: " << this->ext.getMtime() << endl;
-    cout << "Last write: " << this->ext.getWtime() << endl;
+    time_t aux_time = this->ext.getLastcheck();
+    cout << "Last check: " << asctime(gmtime(&aux_time));
+    aux_time = this->ext.getMtime();
+    cout << "Last: " << asctime(gmtime(&aux_time));
+    aux_time = this->ext.getWtime();
+    cout << "Last write: " << asctime(gmtime(&aux_time));
 }
 
 void FileReader::fileClose()
