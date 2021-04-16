@@ -8,7 +8,7 @@ LBLIBS = FileReader.h FAT.h Ext2.h
 
 SRC = FileReader.cc FAT.cc Ext2.cc Main.cc
 OBJ = $(SRC:.cc=.o)
-EXEC = Main
+EXEC = shooter
 
 all: $(EXEC)
 
