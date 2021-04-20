@@ -1,10 +1,152 @@
 #include "Ext2.h"
+#include <time.h>
+#include "FileReader.h"
 
-Ext2::Ext2()
+Ext2::~Ext2()
 {
 }
 
-void Ext2::setExt2Version(int16_t ext2_version){
+void Ext2::printFileSystemInfo(){
+    cout << "------ Filesystem Information ------" << endl
+         << endl;
+
+    cout << "Filesystem: Ext2" << endl
+         << endl;
+
+    cout << "INFO INODE Inode" << endl;
+    cout << "Size: " << this->getSize() << endl;
+    cout << "Num Inodes: " << this->getInodeCount() << endl;
+    cout << "First Inode: " << this->getFirstIno() << endl;
+    cout << "Inodes Group: " << this->getInodesPerGroup() << endl;
+    cout << "Inodes Free: " << this->getFreeInodesCount() << endl;
+
+    cout << endl
+         << "BLOCK INFO" << endl;
+    cout << "Block Size: " << this->getLogBlockSize() << endl;
+    cout << "Reserved Blocks: " << this->getReservedBlocksCount() << endl;
+    cout << "Free Blocks: " << this->getFreeBlocksCount() << endl;
+    cout << "Total Blocks: " << this->getBlocksCount() << endl;
+    cout << "First Block: " << this->getFirstBlock() << endl;
+    cout << "Group Blocks: " << this->getBlockPerGroup() << endl;
+    cout << "Group Frags: " << this->getFragsPerGroup() << endl;
+
+    /*
+    INFO VOLUME
+    Volume name: ext2fs_prova1
+    Last check: Tue Apr 24 18:41:24 2007edit
+    Last: Tue Apr 24 19:33:11 2007
+    Last write: Tue Apr 24 19:33:16 2007
+
+
+    */
+    cout << endl
+         << "INFO VOLUME" << endl;
+    cout << "Volume name: " << this->getVolumeName() << endl;
+    time_t aux_time = this->getLastcheck();
+    cout << "Last check: " << asctime(gmtime(&aux_time));
+    aux_time = this->getMtime();
+    cout << "Last: " << asctime(gmtime(&aux_time));
+    aux_time = this->getWtime();
+    cout << "Last write: " << asctime(gmtime(&aux_time));
+}
+
+void Ext2::parseData(FileReader * freader)
+{
+
+    int16_t aux_16; // to read two bytes
+    char aux_16B[16];
+    int aux_4B;
+
+    //the size of the file (I_SIZE)
+    freader->getFile().seekg(Ext2::S_INODE_SIZE, ios::beg);
+    freader->getFile().read(reinterpret_cast<char *>(&aux_4B), sizeof(aux_4B));
+    this->setSize(aux_4B);
+
+    //the total count of inodes (S_INODE_COUNT)
+    freader->getFile().seekg(Ext2::S_INODE_COUNT, ios::beg);
+    freader->getFile().read(reinterpret_cast<char *>(&aux_4B), sizeof(aux_4B));
+    this->setInodeCount(aux_4B);
+
+    //the id of the first inode (S_FIRST_INO)
+    freader->getFile().seekg(Ext2::S_FIRST_INO, ios::beg);
+    freader->getFile().read(reinterpret_cast<char *>(&aux_4B), sizeof(aux_4B));
+    this->setFirstIno(aux_4B);
+
+    //the number of inodes per group (S_INODES_PER_GROUP)
+    freader->getFile().seekg(Ext2::S_INODES_PER_GROUP, ios::beg);
+    freader->getFile().read(reinterpret_cast<char *>(&aux_4B), sizeof(aux_4B));
+    this->setInodesPerGroup(aux_4B);
+
+    //group size (S_LOG_BLOCK_SIZE)
+    freader->getFile().seekg(Ext2::S_LOG_BLOCK_SIZE, ios::beg);
+    freader->getFile().read(reinterpret_cast<char *>(&aux_4B), sizeof(aux_4B));
+    aux_4B = 1024 << aux_4B;
+    this->setLogBlockSize(aux_4B);
+
+    //reserved blocks (S_R_BLOCKS_COUNT)
+    freader->getFile().seekg(Ext2::S_R_BLOCKS_COUNT, ios::beg);
+    freader->getFile().read(reinterpret_cast<char *>(&aux_4B), sizeof(aux_4B));
+    this->setReservedBlocksCount(aux_4B);
+
+    //free blocks (S_FREE_BLOCKS_COUNT)
+    freader->getFile().seekg(Ext2::S_FREE_BLOCKS_COUNT, ios::beg);
+    freader->getFile().read(reinterpret_cast<char *>(&aux_4B), sizeof(aux_4B));
+    this->setFreeBlocksCount(aux_4B);
+
+    //total number of blocks (S_BLOCKS_COUNT)
+    freader->getFile().seekg(Ext2::S_BLOCKS_COUNT, ios::beg);
+    freader->getFile().read(reinterpret_cast<char *>(&aux_4B), sizeof(aux_4B));
+    this->setBlocksCount(aux_4B);
+
+    //the first block of data (S_FIRST_BLOCK)
+    freader->getFile().seekg(Ext2::S_FIRST_BLOCK, ios::beg);
+    freader->getFile().read(reinterpret_cast<char *>(&aux_4B), sizeof(aux_4B));
+    this->setFirstBlock(aux_4B);
+
+    //group blocks (S_BLOCKS_PER_GROUP) ?????
+    freader->getFile().seekg(Ext2::S_BLOCKS_PER_GROUP, ios::beg);
+    freader->getFile().read(reinterpret_cast<char *>(&aux_4B), sizeof(aux_4B));
+    this->setBlockPerGroup(aux_4B);
+
+    //frags blocks (S_FRAGS_PER_GROUP)
+    freader->getFile().seekg(Ext2::S_FRAGS_PER_GROUP, ios::beg);
+    freader->getFile().read(reinterpret_cast<char *>(&aux_4B), sizeof(aux_4B));
+    this->setFragsPerGroup(aux_4B);
+
+    //frags blocks (S_VOLUME_NAME)
+    freader->getFile().seekg(Ext2::S_VOLUME_NAME, ios::beg);
+    freader->getFile().read(aux_16B, sizeof(aux_16B));
+    this->setVolumeName(aux_16B);
+
+    //time last write (S_WTIME )
+    freader->getFile().seekg(Ext2::S_WTIME, ios::beg);
+    freader->getFile().read(reinterpret_cast<char *>(&aux_4B), sizeof(aux_4B));
+    this->setWtime(aux_4B);
+
+    //time last mount (S_MTIME)
+    freader->getFile().seekg(Ext2::S_MTIME, ios::beg);
+    freader->getFile().read(reinterpret_cast<char *>(&aux_4B), sizeof(aux_4B));
+    this->setMtime(aux_4B);
+
+    //time last check(S_LASTCHECK)
+    freader->getFile().seekg(Ext2::S_LASTCHECK, ios::beg);
+    freader->getFile().read(reinterpret_cast<char *>(&aux_4B), sizeof(aux_4B));
+    this->setLastcheck(aux_4B);
+
+    //the number of free inodes (BG_FREE_INODES_COUNT)
+    freader->getFile().seekg(Ext2::BG_FREE_INODES_COUNT, ios::beg);
+    freader->getFile().read(reinterpret_cast<char *>(&aux_16), sizeof(aux_16));
+    this->setFreeInodesCount(aux_16);
+}
+
+int Ext2::getRootDirectory(){
+    return 0;
+}
+
+
+/* SETTERS AND GETTERS */
+void Ext2::setExt2Version(int16_t ext2_version)
+{
     this->meta.ext2_version = ext2_version;
 }
 void Ext2::setSize(int i_size){

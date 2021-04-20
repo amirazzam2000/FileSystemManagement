@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <string>
+#include "FileSystem.h"
 
 using namespace std;
 
@@ -39,7 +40,7 @@ typedef struct
  * and also provides methods to manage the system. 
  * 
 */
-class Ext2
+class Ext2 : public FileSystem
 {
 private:
     //attriputes
@@ -74,7 +75,12 @@ public:
     
 
     //methodes
-    Ext2();
+    virtual ~Ext2();
+    virtual void parseData(FileReader * freader);
+    virtual void printFileSystemInfo();
+    virtual int getRootDirectory();
+
+    //setters
     void setExt2Version(int16_t ext2_version);
     void setSize(int i_size);
     void setInodeCount(int s_inode_count);
@@ -93,6 +99,7 @@ public:
     void setLastcheck(int s_lastcheck);
     void setFreeInodesCount(int16_t bg_free_inodes_count);
 
+    //getters 
     int16_t  getExt2Version();
     int  getSize();
     int  getInodeCount();
@@ -110,6 +117,8 @@ public:
     int  getMtime();
     int  getLastcheck();
     int16_t  getFreeInodesCount();
+
+    //other methods 
 };
 
 #endif

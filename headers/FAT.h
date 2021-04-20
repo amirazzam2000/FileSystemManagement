@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include "FileSystem.h"
 
 using namespace std;
 
@@ -32,7 +33,7 @@ typedef struct
  * and also provides methods to manage the system. 
  * 
 */
-class FAT
+class FAT : public FileSystem
 {
     private:
         //attriputes
@@ -51,7 +52,13 @@ class FAT
         static int const BPB_BytsPerSec = 11; // sector size
 
         //methodes
-        FAT();
+        virtual ~FAT();
+        virtual void parseData(FileReader * freader);
+        virtual void printFileSystemInfo();
+        virtual int getRootDirectory();
+
+
+        //setter
         void setFatVersion(int16_t version);
         void setFatSecPerClus(char sec_per_clus);
         void setFatRsvdSecCnt(int16_t rsvd_sec_cnt);
@@ -62,6 +69,7 @@ class FAT
         void setFatLable(char lable[11]);
         void setFatSize(int16_t size);
 
+        //getters
         int16_t getFatVersion();
         char getFatSecPerClus();
         int16_t getFatRsvdSecCnt();
