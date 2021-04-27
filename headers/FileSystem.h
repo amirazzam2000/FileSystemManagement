@@ -12,7 +12,7 @@ public:
     virtual ~FileSystem();
     virtual void parseData(FileReader * freader) = 0;
     virtual void printFileSystemInfo() = 0;
-    virtual int getRootDirectory() = 0;
+    virtual bool checkFileInRoot(FileReader *freader, std::string fileName) = 0;
 
 };
 

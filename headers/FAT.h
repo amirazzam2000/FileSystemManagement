@@ -55,8 +55,7 @@ class FAT : public FileSystem
         virtual ~FAT();
         virtual void parseData(FileReader * freader);
         virtual void printFileSystemInfo();
-        virtual int getRootDirectory();
-
+        virtual bool checkFileInRoot(FileReader *freader, std::string fileName);
 
         //setter
         void setFatVersion(int16_t version);

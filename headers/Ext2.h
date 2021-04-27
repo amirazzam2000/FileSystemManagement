@@ -32,6 +32,7 @@ typedef struct
     int s_mtime;
     int s_lastcheck;
     int16_t bg_free_inodes_count;
+    int inode_table_pointer;
 
 } MetaExt;
 
@@ -69,16 +70,20 @@ public:
     static int const S_WTIME = 1024 + 48 ;               // time last write (4 bytes)
     static int const S_MTIME = 1024 + 44;               //  time last mount (4 bytes) 
     static int const S_LASTCHECK = 1024 + 64 ;           //  time last check(4 bytes)
-
-    // group block (shifted 2)
-    static int const BG_FREE_INODES_COUNT = 1024 * 2 + 14; // the number of free inodes (2 bytes)
     
+
+    // group block (shifted 1024 * 2)
+    static int const BG_FREE_INODES_COUNT = 1024 * 2 + 14; // the number of free inodes (2 bytes)
+    static int const BG_INODE_TABLE = 1024 * 2 + 8; // the pointer to the first entery of the inode table (4 bytes)
+
+    //Inode table
+    static int const I_BLOCKS = 28; //  the number of blocks stored in the inode (4 bytes) (relative to the inode table)
 
     //methodes
     virtual ~Ext2();
     virtual void parseData(FileReader * freader);
     virtual void printFileSystemInfo();
-    virtual int getRootDirectory();
+    virtual bool checkFileInRoot(FileReader *freader, std::string fileName);
 
     //setters
     void setExt2Version(int16_t ext2_version);
@@ -98,9 +103,11 @@ public:
     void setMtime(int s_mtime);
     void setLastcheck(int s_lastcheck);
     void setFreeInodesCount(int16_t bg_free_inodes_count);
+    void setInodeTablePointer(int inode_table_pointer);
 
-    //getters 
-    int16_t  getExt2Version();
+    //getters
+    int16_t
+    getExt2Version();
     int  getSize();
     int  getInodeCount();
     int  getFirstIno();
@@ -117,6 +124,7 @@ public:
     int  getMtime();
     int  getLastcheck();
     int16_t  getFreeInodesCount();
+    int getInodeTablePointer();
 
     //other methods 
 };

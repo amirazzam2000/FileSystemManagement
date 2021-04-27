@@ -14,7 +14,11 @@ int main(int argc, char * argv[]){
 
         if (strcmp(argv[1], "/info") == 0){    
             d.getFileSystem()->printFileSystemInfo();
-        }else{
+        }
+        else if (strcmp(argv[1], "/find") == 0){
+            d.getRootDirectory();
+        }
+        else{
             cout << "unsupported operation"<<endl;
         }
 
