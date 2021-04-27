@@ -22,8 +22,7 @@ class DirectoryManager
         DirectoryManager(string path);
         FileSystem * getFileSystem();
         void close();
-        void getRootDirectory();
-
+        int checkFileInRoot(string file);
 };
 
 #endif

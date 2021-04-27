@@ -75,7 +75,7 @@ void FAT::parseData(FileReader * freader)
 
 }
 
-bool FAT::checkFileInRoot(FileReader *freader, std::string fileName)
+int FAT::checkFileInRoot(FileReader *freader, std::string fileName)
 {
     freader->getFile().seekg(FAT::BPB_BytsPerSec, ios::beg);
     fileName = "";

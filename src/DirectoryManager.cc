@@ -59,6 +59,7 @@ void DirectoryManager::close(){
     delete (this->freader);
 }
 
-void DirectoryManager::getRootDirectory(){
-    this->filesystem->checkFileInRoot(this->freader,"");
+int DirectoryManager::checkFileInRoot(string file)
+{
+    return this->filesystem->checkFileInRoot(this->freader,file);
 }
