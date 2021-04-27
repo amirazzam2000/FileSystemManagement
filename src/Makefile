@@ -4,9 +4,9 @@ CXXFLAGS = -Wall -Werror -Wextra -pedantic -std=c++17 -g -fsanitize=address -I$(
 LDFLAGS =  -fsanitize=address
 
 
-LBLIBS = FileReader.h FAT.h Ext2.h
+LBLIBS = FileReader.h FAT.h Ext2.h FileSystem.h DirectoryManager.h
 
-SRC = FileReader.cc FAT.cc Ext2.cc Main.cc
+SRC = FileReader.cc FAT.cc Ext2.cc FileSystem.cc DirectoryManager.cc Main.cc
 OBJ = $(SRC:.cc=.o)
 EXEC = shooter
 
