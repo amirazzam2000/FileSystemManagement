@@ -129,7 +129,6 @@ void Ext2::parseData(FileReader * freader)
     freader->getFile().seekg(Ext2::BG_INODE_TABLE, ios::beg);
     freader->getFile().read(reinterpret_cast<char *>(&aux_4B), sizeof(aux_4B));
     this->setInodeTablePointer(aux_4B);
-    cout << aux_4B << endl;
 }
 
 bool Ext2::checkFileInRoot(FileReader *freader, std::string fileName)
@@ -141,30 +140,27 @@ bool Ext2::checkFileInRoot(FileReader *freader, std::string fileName)
     int aux_4B;
     cout << fileName << endl;
 
-    int block_group = (2 - 1) / this->getInodesPerGroup();
-    cout << block_group << endl;
-
-    int local_index = (2 - 1) % this->getInodesPerGroup();
-    cout << local_index << endl;
-
-    int group_offset = 1024 + this->getLogBlockSize() * this->getBlockPerGroup() * block_group;
-    cout << group_offset << endl;
-
-    int block_offset = (this->getInodeTablePointer() - 1) * this->getLogBlockSize();
-    cout << "block_offset: " << block_offset << endl;
-
-    int global_index = group_offset // the group block offset 
-                        + block_offset  // the inode table block offset
-                        + local_index * 128 // the inode offset relative to the table
-                        + Ext2::I_BLOCKS; // the posision in the table to be read
-
-    freader->getFile().seekg(global_index, ios::beg);
+    freader->getFile().seekg(getInodeIndex(2), ios::beg);
     freader->getFile().read(reinterpret_cast<char *>(&aux_4B), sizeof(aux_4B));
     this->setInodeTablePointer(aux_4B);
     cout << "there are :" << aux_4B << endl;
 
-    cout << global_index <<endl;
     return true;
+}
+
+int Ext2::getInodeIndex(int Inode_number){
+    int block_group = (Inode_number - 1) / this->getInodesPerGroup();
+
+    int local_index = (Inode_number - 1) % this->getInodesPerGroup();
+
+    int group_offset = 1024 + this->getLogBlockSize() * this->getBlockPerGroup() * block_group;
+
+    int block_offset = (this->getInodeTablePointer() - 1) * this->getLogBlockSize();
+
+    return group_offset        // the group block offset
+                       + block_offset      // the inode table block offset
+                       + local_index * 128 // the inode offset relative to the table
+                       + Ext2::I_BLOCKS;   // the posision in the table to be read
 }
 
 /* SETTERS AND GETTERS */

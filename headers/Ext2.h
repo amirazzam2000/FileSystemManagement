@@ -83,6 +83,7 @@ public:
     virtual void parseData(FileReader * freader);
     virtual void printFileSystemInfo();
     virtual bool checkFileInRoot(FileReader *freader, std::string fileName);
+    int getInodeIndex(int Inode_number);
 
     //setters
     void setExt2Version(int16_t ext2_version);
