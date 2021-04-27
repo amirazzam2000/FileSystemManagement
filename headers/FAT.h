@@ -20,7 +20,7 @@ typedef struct
     char sec_per_clus;
     int16_t rsvd_sec_cnt;
     char num_fats;
-    char fat_name[8];
+    char fat_name[9];
     int16_t root_enteries;
     int16_t sec_per_fat;
     int16_t size;

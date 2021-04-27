@@ -104,6 +104,7 @@ void FAT::setFatOEMName(char * fat_name){
     for(int i = 0 ; i < 8 ; i++){
         this->meta.fat_name[i] = fat_name[i];
     }
+    this->meta.fat_name[8] = 0;
 }
 
 void FAT::setFatRootEnteries(int16_t root_enteries){

@@ -141,10 +141,10 @@ bool Ext2::checkFileInRoot(FileReader *freader, std::string fileName)
     int aux_4B;
     cout << fileName << endl;
 
-    int block_group = (this->getFirstIno() - 1) / this->getInodesPerGroup();
+    int block_group = (2 - 1) / this->getInodesPerGroup();
     cout << block_group << endl;
 
-    int local_index = (this->getFirstIno() - 1) % this->getInodesPerGroup();
+    int local_index = (2 - 1) % this->getInodesPerGroup();
     cout << local_index << endl;
 
     int group_offset = 1024 + this->getLogBlockSize() * this->getBlockPerGroup() * block_group;
@@ -155,7 +155,7 @@ bool Ext2::checkFileInRoot(FileReader *freader, std::string fileName)
 
     int global_index = group_offset // the group block offset 
                         + block_offset  // the inode table block offset
-                        + local_index * 124 // the inode offset relative to the table
+                        + local_index * 128 // the inode offset relative to the table
                         + Ext2::I_BLOCKS; // the posision in the table to be read
 
     freader->getFile().seekg(global_index, ios::beg);
