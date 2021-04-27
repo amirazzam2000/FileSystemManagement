@@ -42,7 +42,6 @@ void Ext2::printFileSystemInfo(){
 void Ext2::parseData(FileReader * freader)
 {
 
-    int16_t aux_16; // to read two bytes
     char aux_16B[16];
     int aux_4B;
 
@@ -123,9 +122,9 @@ void Ext2::parseData(FileReader * freader)
     this->setLastcheck(aux_4B);
 
     //the number of free inodes (BG_FREE_INODES_COUNT)
-    freader->getFile().seekg(Ext2::BG_FREE_INODES_COUNT, ios::beg);
-    freader->getFile().read(reinterpret_cast<char *>(&aux_16), sizeof(aux_16));
-    this->setFreeInodesCount(aux_16);
+    freader->getFile().seekg(Ext2::S_Free_INODE_COUNT, ios::beg);
+    freader->getFile().read(reinterpret_cast<char *>(&aux_4B), sizeof(aux_4B));
+    this->setFreeInodesCount(aux_4B);
 
     freader->getFile().seekg(Ext2::BG_INODE_TABLE, ios::beg);
     freader->getFile().read(reinterpret_cast<char *>(&aux_4B), sizeof(aux_4B));
@@ -222,9 +221,9 @@ void Ext2::setMtime(int s_mtime){
 void Ext2::setLastcheck(int s_lastcheck){
     this->meta.s_lastcheck = s_lastcheck;
 }
-void Ext2::setFreeInodesCount(int16_t bg_free_inodes_count)
+void Ext2::setFreeInodesCount(int bg_free_inodes_count)
 {
-    this->meta.bg_free_inodes_count = bg_free_inodes_count;
+    this->meta.s_free_inodes_count = bg_free_inodes_count;
 }
 
 void Ext2::setInodeTablePointer(int inode_table_pointer)
@@ -281,9 +280,9 @@ int Ext2::getMtime(){
 int Ext2::getLastcheck(){
     return this->meta.s_lastcheck;
 }
-int16_t Ext2::getFreeInodesCount()
+int Ext2::getFreeInodesCount()
 {
-    return this->meta.bg_free_inodes_count;
+    return this->meta.s_free_inodes_count;
 }
 
 int Ext2::getInodeTablePointer()
