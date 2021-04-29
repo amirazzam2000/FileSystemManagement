@@ -77,12 +77,13 @@ public:
 
     //Inode table
     static int const I_BLOCKS = 28; //  the number of blocks stored in the inode (4 bytes) (relative to the inode table)
+    static int const I_BLOCK = 40;  //  pointer to data blocks  (4 bytes * 15)
 
     //methodes
     virtual ~Ext2();
     virtual void parseData(FileReader * freader);
     virtual void printFileSystemInfo();
-    virtual bool checkFileInRoot(FileReader *freader, std::string fileName);
+    virtual int checkFileInRoot(FileReader *freader, std::string fileName);
     int getInodeIndex(int Inode_number);
 
     //setters

@@ -1,6 +1,6 @@
 CXX = g++
 DIR = ../headers/
-CXXFLAGS = -Wall -Werror -Wextra -pedantic -std=c++17 -g -fsanitize=address -I$(DIR) -Wno-write-strings
+CXXFLAGS = -Wall -Werror -Wextra -pedantic -lm -std=c++17 -g -fsanitize=address -I$(DIR) -Wno-write-strings
 LDFLAGS =  -fsanitize=address
 
 

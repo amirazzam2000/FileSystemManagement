@@ -1,6 +1,7 @@
 #include "Ext2.h"
 #include <time.h>
 #include "FileReader.h"
+#include <string.h>
 
 Ext2::~Ext2()
 {
@@ -131,21 +132,83 @@ void Ext2::parseData(FileReader * freader)
     this->setInodeTablePointer(aux_4B);
 }
 
-bool Ext2::checkFileInRoot(FileReader *freader, std::string fileName)
+int Ext2::checkFileInRoot(FileReader *freader, std::string fileName)
 {
-    /*
-        after you read the global index read the 	i_block  which contains pointers to the data objects
-        then you have to checck how many blocks you have using the 	i_blocks and then read them 
-    */
-    int aux_4B;
-    cout << fileName << endl;
 
-    freader->getFile().seekg(getInodeIndex(2), ios::beg);
-    freader->getFile().read(reinterpret_cast<char *>(&aux_4B), sizeof(aux_4B));
-    this->setInodeTablePointer(aux_4B);
-    cout << "there are :" << aux_4B << endl;
+    int size_of_blocks;
+    int aux_size = 0;
+    int inode_pointer;
+    int data_entry = 0;
+    
+    int16_t record_len = 0;
+    char name_len;
+    char file_type;
+    char * file_name = NULL;
+    
+    int aux_data_postion = 0;
+    
+    int table_postion = getInodeIndex(2);
 
-    return true;
+
+    freader->getFile().seekg(table_postion +Ext2::I_BLOCKS, ios::beg);
+    freader->getFile().read(reinterpret_cast<char *>(&size_of_blocks), sizeof(size_of_blocks));
+
+
+    size_of_blocks = 512 * size_of_blocks;
+
+    
+    while (aux_size < size_of_blocks && data_entry < 13 )
+    {
+        freader->getFile().seekg(table_postion + Ext2::I_BLOCK + (data_entry++), ios::beg);
+        freader->getFile().read(reinterpret_cast<char *>(&aux_data_postion), sizeof(aux_data_postion));
+
+
+        aux_data_postion *= this->getLogBlockSize();
+
+        freader->getFile().seekg(aux_data_postion, ios::beg);
+
+        
+        aux_size += this->getLogBlockSize();
+
+        int amount_of_data_read = 0;
+        
+
+        while (amount_of_data_read < this->getLogBlockSize() )
+        {
+            record_len = 0;
+            freader->getFile().seekg(aux_data_postion, ios::beg);
+            freader->getFile().read(reinterpret_cast<char *>(&inode_pointer), sizeof(int));
+
+            freader->getFile().read(reinterpret_cast<char *>(&record_len), sizeof(int16_t));
+            
+            aux_data_postion += record_len;
+            amount_of_data_read += record_len;
+            
+
+            freader->getFile().read(reinterpret_cast<char *>(&name_len), sizeof(char));
+            
+            file_name = (char*)calloc(sizeof(char), name_len + 1);
+            
+            freader->getFile().read(reinterpret_cast<char *>(&file_type), sizeof(char));
+            freader->getFile().read(file_name, sizeof(char) * name_len);
+
+
+            if (strcmp(file_name, fileName.c_str()) == 0){
+                free(file_name);
+                int aux = getInodeIndex(inode_pointer);
+                freader->getFile().seekg(aux + Ext2::I_BLOCKS, ios::beg);
+                freader->getFile().read(reinterpret_cast<char *>(&size_of_blocks), sizeof(size_of_blocks));
+                return size_of_blocks * 512;
+            }
+            free(file_name);
+        }
+        
+
+    }
+    
+
+
+    return -1;
 }
 
 int Ext2::getInodeIndex(int Inode_number){
@@ -159,8 +222,7 @@ int Ext2::getInodeIndex(int Inode_number){
 
     return group_offset        // the group block offset
                        + block_offset      // the inode table block offset
-                       + local_index * 128 // the inode offset relative to the table
-                       + Ext2::I_BLOCKS;   // the posision in the table to be read
+                       + local_index * 128; // the inode offset relative to the table
 }
 
 /* SETTERS AND GETTERS */
