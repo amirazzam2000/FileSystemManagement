@@ -1,5 +1,11 @@
 #include "FAT.h"
 #include "FileReader.h"
+//#include <math.h>
+#include<cmath>
+#include <string.h>
+#include <algorithm>
+
+using namespace std;
 
 FAT::~FAT(){
         
@@ -77,9 +83,63 @@ void FAT::parseData(FileReader * freader)
 
 int FAT::checkFileInRoot(FileReader *freader, std::string fileName)
 {
-    freader->getFile().seekg(FAT::BPB_BytsPerSec, ios::beg);
-    fileName = "";
-    return 0;
+    char name[11];
+    int size;
+
+    //RootDirSectors = ((BPB_RootEntCnt * 32) + (BPB_BytsPerSec – 1)) / BPB_BytsPerSec;
+    //int root_dir = (int)ceil(((this->getFatRootEnteries() * 32) + (this->getFatSize() - 1)) / this->getFatSize());
+    
+
+    int sector_pointer = this->getFatRsvdSecCnt() * this->getFatSize() + this->getFatNumFATs() * this->getFatSecPerFat() * this->getFatSize();
+    name[0] = 1;
+    int i = 0;
+    string full_name;
+
+    while(name[0] != 0 && name[0] != (char)229 ){
+
+        freader->getFile().seekg(sector_pointer + (i * 32), ios::beg);
+        freader->getFile().read(name, sizeof(name));
+
+        freader->getFile().seekg(sector_pointer + (i * 32) + 28, ios::beg);
+        freader->getFile().read(reinterpret_cast<char *> (&size), sizeof(int));
+
+        i++;
+
+        if (size != -1 ){
+            for (int j = 0; j < 8; j++)
+            {
+                if (name[j] == ' ')
+                {
+                    break;
+                }
+                full_name += ::tolower(name[j]);
+            }
+            if (size != 0){
+                full_name += ".";
+            }
+            for (int j = 8; j < 11; j++)
+            {
+                if (name[j] == ' ')
+                {
+                    break;
+                }
+                full_name += ::tolower(name[j]);
+            }
+
+            std::for_each(fileName.begin(), fileName.end(), [](char &c) {
+                c = ::tolower(c);
+            });
+
+            if (strcmp(fileName.c_str(), full_name.c_str()) == 0)
+            {
+                return size;
+            }
+
+            full_name = "";
+        }
+        
+    }
+    return -1;
 }
 
 /* SETTERS AND GETTERS */
