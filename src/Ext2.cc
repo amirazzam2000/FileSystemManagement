@@ -137,6 +137,7 @@ int Ext2::checkFileInRoot(FileReader *freader, std::string fileName)
     return this->checkFile(getInodeIndex(2), freader, fileName);
 }
 
+
 int Ext2::checkFile(int directory_index, FileReader *freader, std::string fileName)
 {
 
