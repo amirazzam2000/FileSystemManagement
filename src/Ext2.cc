@@ -134,81 +134,100 @@ void Ext2::parseData(FileReader * freader)
 
 int Ext2::checkFileInRoot(FileReader *freader, std::string fileName)
 {
+    return this->checkFile(getInodeIndex(2), freader, fileName);
+}
 
+int Ext2::checkFile(int directory_index, FileReader *freader, std::string fileName)
+{
     int size_of_blocks;
     int aux_size = 0;
     int inode_pointer;
     int data_entry = 0;
-    
+
     int16_t record_len = 0;
     char name_len;
     char file_type;
-    char * file_name = NULL;
-    
+    char *file_name = NULL;
+
     int aux_data_postion = 0;
+
     
-    int table_postion = getInodeIndex(2);
-
-
-    freader->getFile().seekg(table_postion +Ext2::I_BLOCKS, ios::beg);
+    freader->getFile().seekg(directory_index + Ext2::I_BLOCKS, ios::beg);
     freader->getFile().read(reinterpret_cast<char *>(&size_of_blocks), sizeof(size_of_blocks));
 
-
-    size_of_blocks = 512 * size_of_blocks;
-
     
-    while (aux_size < size_of_blocks && data_entry < 13 )
+    
+    while (aux_size < size_of_blocks ) //&& data_entry < 13)
     {
-        freader->getFile().seekg(table_postion + Ext2::I_BLOCK + (data_entry++), ios::beg);
+        
+        freader->getFile().seekg(directory_index + Ext2::I_BLOCK + (data_entry++), ios::beg);
         freader->getFile().read(reinterpret_cast<char *>(&aux_data_postion), sizeof(aux_data_postion));
-
 
         aux_data_postion *= this->getLogBlockSize();
 
         freader->getFile().seekg(aux_data_postion, ios::beg);
 
-        
-        aux_size += this->getLogBlockSize();
+        aux_size++;
 
         int amount_of_data_read = 0;
-        
 
-        while (amount_of_data_read < this->getLogBlockSize() )
+        while (amount_of_data_read < this->getLogBlockSize())
         {
+            
             record_len = 0;
             freader->getFile().seekg(aux_data_postion, ios::beg);
             freader->getFile().read(reinterpret_cast<char *>(&inode_pointer), sizeof(int));
 
             freader->getFile().read(reinterpret_cast<char *>(&record_len), sizeof(int16_t));
-            
+
             aux_data_postion += record_len;
             amount_of_data_read += record_len;
-            
+
 
             freader->getFile().read(reinterpret_cast<char *>(&name_len), sizeof(char));
-            
-            file_name = (char*)calloc(sizeof(char), name_len + 1);
-            
+
+            file_name = (char *)calloc(sizeof(char), name_len + 1);
+
             freader->getFile().read(reinterpret_cast<char *>(&file_type), sizeof(char));
             freader->getFile().read(file_name, sizeof(char) * name_len);
 
-
-            if (strcmp(file_name, fileName.c_str()) == 0){
+            if (record_len == 0){
                 free(file_name);
-                int aux = getInodeIndex(inode_pointer);
-                freader->getFile().seekg(aux + Ext2::I_BLOCKS, ios::beg);
-                freader->getFile().read(reinterpret_cast<char *>(&size_of_blocks), sizeof(size_of_blocks));
-                return size_of_blocks * 512;
+                break;
+            }
+
+            if (file_type == Ext2::EXT2_FT_DIR 
+                    && strcmp(".", file_name) != 0 
+                    && strcmp("..", file_name) != 0 
+                    && strcmp("lost+found", file_name) != 0)
+            {
+                int aux = this->checkFile(getInodeIndex(inode_pointer), freader, fileName);
+                if (aux != -1)
+                {
+                    free(file_name);
+                    return aux;
+                }
+            }
+
+            if (strcmp(file_name, fileName.c_str()) == 0)
+            {
+                free(file_name);
+                return this->getFileSize(getInodeIndex(inode_pointer), freader);
             }
             free(file_name);
         }
-        
-
     }
-    
-
 
     return -1;
+}
+
+int Ext2::getFileSize(int Inode_index, FileReader *freader)
+{
+    int size;
+    freader->getFile().seekg(Inode_index + Ext2::I_SIZE, ios::beg);
+    freader->getFile().read(reinterpret_cast<char *>(&size), sizeof(size));
+    
+    return size;
 }
 
 int Ext2::getInodeIndex(int Inode_number){
