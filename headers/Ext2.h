@@ -83,6 +83,7 @@ public:
     //constants 
     static int const EXT2_FT_DIR = 2; //  the file type
 
+
     //methodes
     virtual ~Ext2();
     virtual void parseData(FileReader * freader);
@@ -90,6 +91,7 @@ public:
     virtual int checkFileInRoot(FileReader *freader, std::string fileName);
     int checkFile(int directory_index, FileReader *freader, std::string fileName);
     int getFileSize(int Inode_index, FileReader *freader);
+
     int getInodeIndex(int Inode_number);
 
     //setters

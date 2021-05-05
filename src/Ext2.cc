@@ -139,6 +139,7 @@ int Ext2::checkFileInRoot(FileReader *freader, std::string fileName)
 
 int Ext2::checkFile(int directory_index, FileReader *freader, std::string fileName)
 {
+
     int size_of_blocks;
     int aux_size = 0;
     int inode_pointer;
@@ -166,6 +167,7 @@ int Ext2::checkFile(int directory_index, FileReader *freader, std::string fileNa
         aux_data_postion *= this->getLogBlockSize();
 
         freader->getFile().seekg(aux_data_postion, ios::beg);
+
 
         aux_size++;
 
@@ -228,6 +230,7 @@ int Ext2::getFileSize(int Inode_index, FileReader *freader)
     freader->getFile().read(reinterpret_cast<char *>(&size), sizeof(size));
     
     return size;
+
 }
 
 int Ext2::getInodeIndex(int Inode_number){
