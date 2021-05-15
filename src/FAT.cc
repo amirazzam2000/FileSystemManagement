@@ -113,6 +113,7 @@ int FAT::checkFile(int offset, FileReader *freader, std::string fileName)
     int i = 0;
     int8_t isDirectory;
     string full_name;
+    bool hasDot = false;
 
     while (name[0] != (char)0 && name[0] != (char)229)
     {
@@ -132,6 +133,7 @@ int FAT::checkFile(int offset, FileReader *freader, std::string fileName)
 
         if (size != -1)
         {
+            hasDot = false;
             for (int j = 0; j < 8; j++)
             {
                 if (name[j] == ' ')
@@ -140,25 +142,25 @@ int FAT::checkFile(int offset, FileReader *freader, std::string fileName)
                 }
                 full_name += ::tolower(name[j]);
             }
-            if (size != 0)
-            {
-                full_name += ".";
-            }
             for (int j = 8; j < 11; j++)
             {
                 if (name[j] == ' ')
                 {
                     break;
+                }else if (!hasDot){
+                    full_name += ".";
+                    hasDot = true;
                 }
                 full_name += ::tolower(name[j]);
             }
-            if (isDirectory != 16)
-                cout << "|" << full_name << "|" << strlen(full_name.c_str()) << endl;
 
-            std::for_each(fileName.begin(), fileName.end(), [](char &c) {
-                c = ::tolower(c);
-            });
+            if (isDirectory != 16 && isDirectory != 15)
+                cout << "|" << full_name << "|" << endl;
 
+            std::for_each(fileName.begin(), fileName.end(), [](char &c)
+                { 
+                    c = ::tolower(c); 
+                });
 
             if (isDirectory == 16)
             {
@@ -175,7 +177,7 @@ int FAT::checkFile(int offset, FileReader *freader, std::string fileName)
 
                 cout << "\t\t--end Dir " << full_name << " --" << endl;
             }
-            else if (strcmp(fileName.c_str(), full_name.c_str()) == 0)
+            else if (strcmp(fileName.c_str(), full_name.c_str()) == 0 && isDirectory != 15)
             {
                 return size;
             }
