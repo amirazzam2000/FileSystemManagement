@@ -107,7 +107,7 @@ int FAT::checkFile(int offset, FileReader *freader, std::string fileName)
         sector_pointer += this->getFatRootEnteries() * 32;   
     }
 
-    cout << "\t\toffset " << sector_pointer << endl;
+    //cout << "\t\toffset " << sector_pointer << endl;
     
     name[0] = 1;
     int i = 0;
@@ -154,8 +154,8 @@ int FAT::checkFile(int offset, FileReader *freader, std::string fileName)
                 full_name += ::tolower(name[j]);
             }
 
-            if (isDirectory != 16 && isDirectory != 15)
-                cout << "|" << full_name << "|" << endl;
+            //if (isDirectory != 16 && isDirectory != 15)
+            //    cout << "|" << full_name << "|" << endl;
 
             std::for_each(fileName.begin(), fileName.end(), [](char &c)
                 { 
@@ -164,9 +164,9 @@ int FAT::checkFile(int offset, FileReader *freader, std::string fileName)
 
             if (isDirectory == 16)
             {
-                cout << "\t\tnext file: " << nextFile << endl;
+                //cout << "\t\tnext file: " << nextFile << endl;
                 int aux = -1;
-                cout << "\t\t|" << full_name << "|" << strlen(full_name.c_str()) << endl;
+                //cout << "\t\t|" << full_name << "|" << strlen(full_name.c_str()) << endl;
                 if (strcmp(".", full_name.c_str()) != 0 && strcmp("..", full_name.c_str()) != 0)
                     aux = checkFile(nextFile, freader, fileName);
 
@@ -175,7 +175,7 @@ int FAT::checkFile(int offset, FileReader *freader, std::string fileName)
                     return aux;
                 }
 
-                cout << "\t\t--end Dir " << full_name << " --" << endl;
+                //cout << "\t\t--end Dir " << full_name << " --" << endl;
             }
             else if (strcmp(fileName.c_str(), full_name.c_str()) == 0 && isDirectory != 15)
             {
