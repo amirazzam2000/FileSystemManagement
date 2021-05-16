@@ -212,7 +212,7 @@ int Ext2::checkFile(int directory_index, FileReader *freader, std::string fileNa
                 }
             }
 
-            if (strcmp(file_name, fileName.c_str()) == 0)
+            if (strcmp(file_name, fileName.c_str()) == 0 && file_type != Ext2::EXT2_FT_DIR)
             {
                 free(file_name);
                 return this->getFileSize(getInodeIndex(inode_pointer), freader);

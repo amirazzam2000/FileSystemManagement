@@ -47,6 +47,11 @@ private:
     //attriputes
     MetaExt meta;
 
+    // methods
+    int checkFile(int directory_index, FileReader *freader, std::string fileName);
+    int getInodeIndex(int Inode_number);
+    int getFileSize(int Inode_index, FileReader *freader);
+
 public:
     //attriputes
     static int32_t const MAGIC_VALUE = 0xEF53; // the magic value to compare with
@@ -89,10 +94,8 @@ public:
     virtual void parseData(FileReader * freader);
     virtual void printFileSystemInfo();
     virtual int checkFileInRoot(FileReader *freader, std::string fileName);
-    int checkFile(int directory_index, FileReader *freader, std::string fileName);
-    int getFileSize(int Inode_index, FileReader *freader);
 
-    int getInodeIndex(int Inode_number);
+    
 
     //setters
     void setExt2Version(int16_t ext2_version);
@@ -115,8 +118,7 @@ public:
     void setInodeTablePointer(int inode_table_pointer);
 
     //getters
-    int16_t
-    getExt2Version();
+    int16_t getExt2Version();
     int  getSize();
     int  getInodeCount();
     int  getFirstIno();
