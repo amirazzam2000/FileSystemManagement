@@ -39,6 +39,9 @@ class FAT : public FileSystem
         //attriputes
         MetaFat meta;
 
+        //methods
+        int checkFile(int offset, FileReader *freader, std::string fileName);
+
     public:
         //attriputes
         static int const BPB_FATSz16 = 22;
@@ -51,12 +54,17 @@ class FAT : public FileSystem
         static int const BPB_RootEntCnt = 17; // max root enteries
         static int const BPB_BytsPerSec = 11; // sector size
 
+        static int const DIR_Attr = 11;  // a flag storing meta data about the file entry (like if it is a directory or if it has a long name etc.)
+        static int const DIR_FstClusLO = 26; // next file
+        static int const DIR_FileSize = 28; // file size
+
+
         //methodes
         virtual ~FAT();
         virtual void parseData(FileReader * freader);
         virtual void printFileSystemInfo();
         virtual int checkFileInRoot(FileReader *freader, std::string fileName);
-        int checkFile(int offset, FileReader *freader, std::string fileName);
+        
 
         //setter
         void setFatVersion(int16_t version);
