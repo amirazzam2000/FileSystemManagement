@@ -112,7 +112,7 @@ int FAT::checkFile(int offset, FileReader *freader, std::string fileName)
     string full_name;
     bool hasDot = false;
 
-    while (name[0] != (char)0 && name[0] != (char)229)
+    while (name[0] != (char)0)
     {
         
         freader->getFile().seekg(sector_pointer + (i * 32), ios::beg);
@@ -128,7 +128,7 @@ int FAT::checkFile(int offset, FileReader *freader, std::string fileName)
         freader->getFile().read(reinterpret_cast<char *>(&isDirectory), sizeof(int8_t));
         i++;
 
-        if (size != -1)
+        if (size != -1 && name[0] != (char)229)
         {
             hasDot = false;
             for (int j = 0; j < 8; j++)
