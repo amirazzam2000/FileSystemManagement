@@ -254,9 +254,120 @@ bool Ext2::deleteFile(FileReader *freader, std::string fileName){
 }
 
 bool Ext2::deleteFileInExt2(int directory_index, FileReader *freader, std::string fileName){
-    cout << directory_index << fileName;
-    freader->getFile().seekg(Ext2::BG_INODE_TABLE, ios::beg);
-    return true;
+
+    int size_of_blocks;
+    int aux_size = 0;
+    int data_entry = 0;
+
+    int inode_pointer[2];
+    int16_t record_len[2];
+    record_len[0] = 0;
+    record_len[1] = 0;
+    char name_len[2];
+    char file_type[2];
+    char *file_name[2];
+    file_name[0] = NULL;
+    file_name[1] = NULL;
+
+    int i = 0;
+
+
+    int aux_data_postion[3];
+
+    freader->getFile().seekg(directory_index + Ext2::I_BLOCKS, ios::beg);
+    freader->getFile().read(reinterpret_cast<char *>(&size_of_blocks), sizeof(size_of_blocks));
+
+    while (aux_size < size_of_blocks) //&& data_entry < 13)
+    {
+
+        freader->getFile().seekg(directory_index + Ext2::I_BLOCK + (data_entry++), ios::beg);
+        freader->getFile().read(reinterpret_cast<char *>(&aux_data_postion[0]), sizeof(aux_data_postion[0]));
+
+        aux_data_postion[0] *= this->getLogBlockSize();
+
+        freader->getFile().seekg(aux_data_postion[0], ios::beg);
+
+        aux_size++;
+
+        int amount_of_data_read = 0;
+        i = 0;
+
+        while (amount_of_data_read < this->getLogBlockSize())
+        {
+            int current_position = i % 2;
+            record_len[current_position] = 0;
+            freader->getFile().seekg(aux_data_postion[i % 3], ios::beg);
+            freader->getFile().read(reinterpret_cast<char *>(&inode_pointer[current_position]), sizeof(int));
+            freader->getFile().read(reinterpret_cast<char *>(&record_len[current_position]), sizeof(int16_t));
+
+            aux_data_postion[(i + 1) % 3] = aux_data_postion[(i%3)] + record_len[current_position];
+            amount_of_data_read += record_len[current_position];
+
+            freader->getFile().read(reinterpret_cast<char *>(&name_len[current_position]), sizeof(char));
+
+            file_name[current_position] = (char *)calloc(sizeof(char), name_len[current_position] + 1);
+
+            freader->getFile().read(reinterpret_cast<char *>(&file_type), sizeof(char));
+            freader->getFile().read(file_name[current_position], sizeof(char) * name_len[current_position]);
+
+            if (record_len[current_position] == 0)
+            {
+                free(file_name[current_position]);
+                break;
+            }
+
+            if (file_type[current_position] == Ext2::EXT2_FT_DIR 
+                    && strcmp(".", file_name[current_position]) != 0 
+                    && strcmp("..", file_name[current_position]) != 0 
+                    && strcmp("lost+found", file_name[current_position]) != 0)
+            {
+                bool aux = this->deleteFileInExt2(getInodeIndex(inode_pointer[current_position]), freader, fileName);
+                if (aux)
+                {
+                    free(file_name[current_position]);
+                    return aux;
+                }
+            }
+
+            if (strcmp(file_name[current_position], fileName.c_str()) == 0 
+                    && file_type[current_position] != Ext2::EXT2_FT_DIR)
+            {
+
+                if(i != 0){
+                    record_len[(i-1)%2] += record_len[i%2];
+                    freader->getFile().seekp(aux_data_postion[(i - 1) % 3] + 4, ios::beg);
+                    freader->getFile().clear();
+                    freader->getFile().write(reinterpret_cast<char *>(&record_len[(i - 1) % 2]), sizeof(int16_t));
+                }else{
+
+                    i++;
+                    int current_position = i % 2;
+                    freader->getFile().seekg(aux_data_postion[i % 3], ios::beg);
+                    freader->getFile().read(reinterpret_cast<char *>(&inode_pointer[current_position]), sizeof(int));
+                    freader->getFile().read(reinterpret_cast<char *>(&record_len[current_position]), sizeof(int16_t));
+                    freader->getFile().read(reinterpret_cast<char *>(&name_len[current_position]), sizeof(char));
+                    file_name[current_position] = (char *)calloc(sizeof(char), name_len[current_position] + 1);
+                    freader->getFile().read(reinterpret_cast<char *>(&file_type[current_position]), sizeof(char));
+                    freader->getFile().read(file_name[current_position], sizeof(char) * name_len[current_position]);
+
+                    freader->getFile().seekp(aux_data_postion[(i-1) % 3], ios::beg);
+                    freader->getFile().write(reinterpret_cast<char *>(&inode_pointer[current_position]), sizeof(int));
+                    freader->getFile().write(reinterpret_cast<char *>(&record_len[current_position]), sizeof(int16_t));
+                    freader->getFile().write(reinterpret_cast<char *>(&name_len[current_position]), sizeof(char));
+                    freader->getFile().write(reinterpret_cast<char *>(&file_type[current_position]), sizeof(char));
+                    freader->getFile().write(file_name[current_position], sizeof(char) * name_len[current_position]);
+
+                }
+
+
+                free(file_name[current_position]);
+                return true;
+            }
+            free(file_name[current_position]);
+            i++;
+        }
+    }
+    return false;
 }
 
 /* SETTERS AND GETTERS */
