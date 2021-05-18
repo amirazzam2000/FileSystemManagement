@@ -339,7 +339,6 @@ bool Ext2::deleteFileInExt2(int directory_index, FileReader *freader, std::strin
                     freader->getFile().clear();
                     freader->getFile().write(reinterpret_cast<char *>(&record_len[(i - 1) % 2]), sizeof(int16_t));
                 }else{
-
                     i++;
                     int current_position = i % 2;
                     freader->getFile().seekg(aux_data_postion[i % 3], ios::beg);
@@ -351,10 +350,15 @@ bool Ext2::deleteFileInExt2(int directory_index, FileReader *freader, std::strin
                     freader->getFile().read(file_name[current_position], sizeof(char) * name_len[current_position]);
 
                     freader->getFile().seekp(aux_data_postion[(i-1) % 3], ios::beg);
+                    freader->getFile().clear();
                     freader->getFile().write(reinterpret_cast<char *>(&inode_pointer[current_position]), sizeof(int));
+                    freader->getFile().clear();
                     freader->getFile().write(reinterpret_cast<char *>(&record_len[current_position]), sizeof(int16_t));
+                    freader->getFile().clear();
                     freader->getFile().write(reinterpret_cast<char *>(&name_len[current_position]), sizeof(char));
+                    freader->getFile().clear();
                     freader->getFile().write(reinterpret_cast<char *>(&file_type[current_position]), sizeof(char));
+                    freader->getFile().clear();
                     freader->getFile().write(file_name[current_position], sizeof(char) * name_len[current_position]);
 
                 }
