@@ -27,6 +27,25 @@ int main(int argc, char * argv[]){
                 }
             }
         }
+        else if (strcmp(argv[1], "/delete") == 0)
+        {
+            if (argc != 4)
+            {
+                cout << "error you must provide at least 4 parameters of the format : \"./shooter /find <volume_name> <fileName>\"" << endl;
+            }
+            else
+            {
+                bool deleted = d.deleteFile(argv[3]);
+                if (deleted)
+                {
+                    cout << "file deleted" << endl;
+                }
+                else
+                {
+                    cout << "Error. Volume not found." << endl;
+                }
+            }
+        }
         else{
             cout << "unsupported operation"<<endl;
         }

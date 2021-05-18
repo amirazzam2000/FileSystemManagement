@@ -63,3 +63,7 @@ int DirectoryManager::checkFileInRoot(string file)
 {
     return this->filesystem->checkFileInRoot(this->freader,file);
 }
+
+bool DirectoryManager::deleteFile(string file){
+    return this->filesystem->deleteFile(this->freader, file);
+}

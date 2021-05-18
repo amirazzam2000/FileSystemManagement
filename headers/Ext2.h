@@ -49,6 +49,7 @@ private:
 
     // methods
     int checkFile(int directory_index, FileReader *freader, std::string fileName);
+    bool deleteFileInExt2(int directory_index, FileReader *freader, std::string fileName);
     int getInodeIndex(int Inode_number);
     int getFileSize(int Inode_index, FileReader *freader);
 
@@ -94,10 +95,9 @@ public:
     virtual void parseData(FileReader * freader);
     virtual void printFileSystemInfo();
     virtual int checkFileInRoot(FileReader *freader, std::string fileName);
+    virtual bool deleteFile(FileReader *freader, std::string fileName);
 
-    
-
-    //setters
+        //setters
     void setExt2Version(int16_t ext2_version);
     void setSize(int i_size);
     void setInodeCount(int s_inode_count);

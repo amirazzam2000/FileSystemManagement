@@ -41,6 +41,7 @@ class FAT : public FileSystem
 
         //methods
         int checkFile(int offset, FileReader *freader, std::string fileName);
+        bool deleteFileFAT(int offset, FileReader *freader, std::string fileName);
 
     public:
         //attriputes
@@ -64,7 +65,7 @@ class FAT : public FileSystem
         virtual void parseData(FileReader * freader);
         virtual void printFileSystemInfo();
         virtual int checkFileInRoot(FileReader *freader, std::string fileName);
-        
+        virtual bool deleteFile(FileReader *freader, std::string fileName);
 
         //setter
         void setFatVersion(int16_t version);

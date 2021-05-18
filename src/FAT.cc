@@ -126,9 +126,9 @@ int FAT::checkFile(int offset, FileReader *freader, std::string fileName)
 
         freader->getFile().seekg(sector_pointer + (i * 32) + FAT::DIR_Attr, ios::beg);
         freader->getFile().read(reinterpret_cast<char *>(&isDirectory), sizeof(int8_t));
-        i++;
+        
 
-        if (size != -1 && name[0] != (char)229)
+        if ((size != -1) && (name[0] != (char)229))
         {
             hasDot = false;
             for (int j = 0; j < 8; j++)
@@ -172,15 +172,122 @@ int FAT::checkFile(int offset, FileReader *freader, std::string fileName)
             }
             else if (strcmp(fileName.c_str(), full_name.c_str()) == 0 && isDirectory != 15)
             {
+                cout << sector_pointer + (i* 32)  << "|" << (bool)(name[0] == (char)229) << "|" << endl;
                 return size;
             }
 
             full_name = "";
         }
-
-        
+        i++;
     }
     return -1;
+}
+
+bool FAT::deleteFile(FileReader *freader, std::string fileName){
+    return deleteFileFAT(0, freader, fileName);
+}
+
+bool FAT::deleteFileFAT(int offset, FileReader *freader, std::string fileName){
+    char name[11];
+    int size;
+    int16_t nextFile;
+
+    // skip the first two sectors
+    int sector_pointer = this->getFatRsvdSecCnt() * this->getFatSize() + this->getFatNumFATs() * this->getFatSecPerFat() * this->getFatSize();
+
+    if (offset != 0)
+    { // if this is not the root entry
+
+        offset = (offset - 2) * this->getFatSecPerClus() * this->getFatSize();
+        sector_pointer += offset;
+        //(number of root entries * 32) / (bytes per sector)
+        sector_pointer += this->getFatRootEnteries() * 32;
+    }
+
+    name[0] = 1;
+    int i = 0;
+    int8_t isDirectory;
+    string full_name;
+    bool hasDot = false;
+
+    while (name[0] != (char)0)
+    {
+
+        freader->getFile().seekg(sector_pointer + (i * 32), ios::beg);
+        freader->getFile().read(name, sizeof(name));
+
+        freader->getFile().seekg(sector_pointer + (i * 32) + FAT::DIR_FileSize, ios::beg);
+        freader->getFile().read(reinterpret_cast<char *>(&size), sizeof(int));
+
+        freader->getFile().seekg(sector_pointer + (i * 32) + FAT::DIR_FstClusLO, ios::beg);
+        freader->getFile().read(reinterpret_cast<char *>(&nextFile), sizeof(int16_t));
+
+        freader->getFile().seekg(sector_pointer + (i * 32) + FAT::DIR_Attr, ios::beg);
+        freader->getFile().read(reinterpret_cast<char *>(&isDirectory), sizeof(int8_t));
+        
+
+        if ((size != -1) && (name[0] != (char)229))
+        {
+            hasDot = false;
+            for (int j = 0; j < 8; j++)
+            {
+                if (name[j] == ' ')
+                {
+                    break;
+                }
+                full_name += ::tolower(name[j]);
+            }
+            for (int j = 8; j < 11; j++)
+            {
+                if (name[j] == ' ')
+                {
+                    break;
+                }
+                else if (!hasDot)
+                {
+                    full_name += ".";
+                    hasDot = true;
+                }
+                full_name += ::tolower(name[j]);
+            }
+
+            std::for_each(fileName.begin(), fileName.end(), [](char &c)
+                          { c = ::tolower(c); });
+
+            if (isDirectory == 16)
+            {
+
+                bool aux = false;
+
+                if (strcmp(".", full_name.c_str()) != 0 && strcmp("..", full_name.c_str()) != 0)
+                    aux = deleteFileFAT(nextFile, freader, fileName);
+
+                if (aux)
+                {
+                    return aux;
+                }
+            }
+            else if (strcmp(fileName.c_str(), full_name.c_str()) == 0 && isDirectory != 15)
+            {
+                
+                name[0] = (char)229;
+                freader->getFile().seekp(sector_pointer + (i * 32), ios::beg);
+                freader->getFile().clear();
+                freader->getFile().write(name, sizeof(name));
+
+                name[0] = 1;
+                freader->getFile().seekg(sector_pointer + (i * 32), ios::beg);
+                freader->getFile().read(name, sizeof(name));
+
+                return true;
+            }
+
+            full_name = "";
+        }
+
+        i++;
+    }
+    return false;
 }
 
 /* SETTERS AND GETTERS */

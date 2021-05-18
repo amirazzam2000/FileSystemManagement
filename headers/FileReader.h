@@ -9,13 +9,13 @@ using namespace std;
 
 class FileReader {
     private:
-        ifstream file;
+        fstream file;
 
 
     public:
         FileReader(string path);
         void fileClose();
-        ifstream& getFile();
+        fstream& getFile();
 
 
 };

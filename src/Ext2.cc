@@ -224,6 +224,7 @@ int Ext2::checkFile(int directory_index, FileReader *freader, std::string fileNa
     return -1;
 }
 
+
 int Ext2::getFileSize(int Inode_index, FileReader *freader)
 {
     int size;
@@ -246,6 +247,16 @@ int Ext2::getInodeIndex(int Inode_number){
     return group_offset        // the group block offset
                        + block_offset      // the inode table block offset
                        + local_index * 128; // the inode offset relative to the table
+}
+
+bool Ext2::deleteFile(FileReader *freader, std::string fileName){
+    return this->deleteFileInExt2(getInodeIndex(2), freader, fileName);
+}
+
+bool Ext2::deleteFileInExt2(int directory_index, FileReader *freader, std::string fileName){
+    cout << directory_index << fileName;
+    freader->getFile().seekg(Ext2::BG_INODE_TABLE, ios::beg);
+    return true;
 }
 
 /* SETTERS AND GETTERS */

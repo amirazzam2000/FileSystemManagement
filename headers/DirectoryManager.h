@@ -23,6 +23,7 @@ class DirectoryManager
         FileSystem * getFileSystem();
         void close();
         int checkFileInRoot(string file);
+        bool deleteFile(string file);
 };
 
 #endif

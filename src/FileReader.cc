@@ -5,14 +5,14 @@ using namespace std;
 
 FileReader::FileReader(string path)
 {
-    this->file.open(path, ios::in | ios::binary);
+    this->file.open(path, ios::in | fstream::out | ios::binary);
     if (!this->file.good())
     {
         this->file.close();
         cout << "file doesn't exist" << endl;
     }
 }
-ifstream& FileReader::getFile(){
+fstream& FileReader::getFile(){
     return this->file;
 }
 
