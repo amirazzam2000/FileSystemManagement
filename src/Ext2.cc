@@ -311,7 +311,8 @@ bool Ext2::deleteFileInExt2(int directory_index, FileReader *freader, std::strin
 
             if (record_len[current_position] == 0)
             {
-                free(file_name[current_position]);
+                if (NULL != file_name[current_position])
+                    free(file_name[current_position]);
                 break;
             }
 
@@ -323,7 +324,8 @@ bool Ext2::deleteFileInExt2(int directory_index, FileReader *freader, std::strin
                 bool aux = this->deleteFileInExt2(getInodeIndex(inode_pointer[current_position]), freader, fileName);
                 if (aux)
                 {
-                    free(file_name[current_position]);
+                    if (NULL != file_name[current_position])
+                        free(file_name[current_position]);
                     return aux;
                 }
             }
@@ -352,6 +354,7 @@ bool Ext2::deleteFileInExt2(int directory_index, FileReader *freader, std::strin
                     freader->getFile().clear();
                     freader->getFile().write(reinterpret_cast<char *>(&inode_pointer[current_position]), sizeof(int));
                     freader->getFile().clear();
+                    record_len[current_position] += record_len[(i-1)%2];
                     freader->getFile().write(reinterpret_cast<char *>(&record_len[current_position]), sizeof(int16_t));
                     freader->getFile().clear();
                     freader->getFile().write(reinterpret_cast<char *>(&name_len[current_position]), sizeof(char));
@@ -359,14 +362,22 @@ bool Ext2::deleteFileInExt2(int directory_index, FileReader *freader, std::strin
                     freader->getFile().write(reinterpret_cast<char *>(&file_type[current_position]), sizeof(char));
                     freader->getFile().clear();
                     freader->getFile().write(file_name[current_position], sizeof(char) * name_len[current_position]);
-
                 }
 
-
-                free(file_name[current_position]);
+                if (NULL != file_name[0]){
+                    free(file_name[0]);
+                }
+                if (NULL != file_name[1])
+                {
+                    free(file_name[1]);
+                }
                 return true;
             }
-            free(file_name[current_position]);
+            if (NULL != file_name[current_position])
+            {
+                free(file_name[current_position]);
+                file_name[current_position] = NULL;
+            }
             i++;
         }
     }
