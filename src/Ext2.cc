@@ -161,8 +161,7 @@ int Ext2::checkFile(int directory_index, FileReader *freader, std::string fileNa
     
     while (aux_size < size_of_blocks ) //&& data_entry < 13)
     {
-        
-        freader->getFile().seekg(directory_index + Ext2::I_BLOCK + (data_entry++), ios::beg);
+        freader->getFile().seekg(directory_index + Ext2::I_BLOCK + (4 * data_entry++), ios::beg);
         freader->getFile().read(reinterpret_cast<char *>(&aux_data_postion), sizeof(aux_data_postion));
 
         aux_data_postion *= this->getLogBlockSize();
@@ -280,8 +279,8 @@ bool Ext2::deleteFileInExt2(int directory_index, FileReader *freader, std::strin
     while (aux_size < size_of_blocks) //&& data_entry < 13)
     {
 
-        freader->getFile().seekg(directory_index + Ext2::I_BLOCK + (data_entry++), ios::beg);
-        freader->getFile().read(reinterpret_cast<char *>(&aux_data_postion[0]), sizeof(aux_data_postion[0]));
+        freader->getFile().seekg(directory_index + Ext2::I_BLOCK + (4 * data_entry++), ios::beg);
+        freader->getFile().read(reinterpret_cast<char *>(&aux_data_postion), sizeof(aux_data_postion));
 
         aux_data_postion[0] *= this->getLogBlockSize();
 
