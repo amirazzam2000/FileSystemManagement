@@ -40,6 +40,9 @@ this program only supports <i>EXT 2</i> and <i>FAT 16</i> file systems.
 
 <h3>Ext 2</h3>
   Ext2 (the second extended file system) is a file system for the linux kernel. The data in this file system is devided into blocks, these blocks are then grouped into groups. 
+  The main structure that stores the files informations and enteries is known as inode (node index)
+  
+  
   The bloks and groups are structured as shown in the image below:
   
   ![image of Ext 2 sample groups/blocks structure](https://user-images.githubusercontent.com/45884568/119158873-f8429900-ba56-11eb-9711-598e5b0e817e.png)
