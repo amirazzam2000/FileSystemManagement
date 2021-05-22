@@ -53,11 +53,11 @@ this program only supports <i>EXT 2</i> and <i>FAT 16</i> file systems.
 
   The Inode table contains indoe entries, each inode entry is 124 bytes. each of these entries contains the information of a file, direcotry, or simbolic link that this inode points to. these are the information stored in each inode:
 
-  ![image of the information stored in an inode]()
+  ![image of the information stored in an inode](https://user-images.githubusercontent.com/45884568/119240304-fa881e80-bb4e-11eb-8720-36cef4d181af.png)
 
   if the inode points to a directory, each directory entry will follow the following structure:
   
-  ![image of a directory entry]()
+  ![image of a directory entry](https://user-images.githubusercontent.com/45884568/119240323-1986b080-bb4f-11eb-9725-964860ba7519.png)
 
   each block stores as many sequential directory enteries as it can fit. If the entries don't fit in one block, then the reset of the entries will be stored in another block which you can locate using the inode representing this directory.
 
