@@ -82,8 +82,23 @@ this program only supports <i>EXT 2</i> and <i>FAT 16</i> file systems.
   the directory entries are consecutive, and the last entry has a 0x0 in the first character in the file's name. 
   
 
-3. Explanation of the practice
-(a) Requirements: what to do.
+<h3>Explination of the project</h3>
+  This program allowes you to check and modify the information of an Ext2 or a FAT16 file system. As explained before, you can show meta information about the file system, search for a file in the file system, or delete a specific file.
+
+  this is the class diagam of the project:
+
+  ![image class diagram]()
+
+  
+
+  bellow you will find a detailed explination of the functionalities:
+
+  <h4>/info</h4>
+  
+  <h4>/find</h4>
+
+  <h4>/delete</h4>
+  
 (b) Design: explanation of how you designed and structured.
 (c) Data structures used and their justification.
 (d) Tests performed.
