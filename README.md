@@ -68,14 +68,16 @@ this program only supports <i>EXT 2</i> and <i>FAT 16</i> file systems.
   FAT (File Allocation Table) is a type of legacy file systems. FAT offers good performance but isn't very scalable and reliable. The 16 in the name refers to the number of bits used to identify each allocation unit (known as cluster).
 
   Fat file systems are divided into 4 main regions as shown in the figure below:
-    ![image of a the FAT regions]()
+    ![image of a the FAT regions](https://user-images.githubusercontent.com/45884568/119271860-b571f400-bc03-11eb-9507-5274ae3de8f6.png)
+
+    
 
   The reserved region contains the boot sector and BPB (BIOS Parameter Block). these blocks contain important information about he file system like the number FATs, the size of the cluster, or the number of entries in the root directory. 
 
   the root directory entry is located in the root directory region. each directory/file entry follows the same format as shown below: 
-    ![image of a the File structure]()
+    ![image of a the File structure](https://user-images.githubusercontent.com/45884568/119271839-a12df700-bc03-11eb-9bfb-cea78efb2ac1.png)
 
-  there is a limitation presented with this structure as it doesn't allow files with a name greater than 8 bytes (as 3 bytes of the name are reserved for the extinction). However, this problem is solved by setting a flag indicating that the file name is longer than 8 bytes and the name is saved in another section. 
+  there is a limitation presented with this structure as it doesn't allow files with a name longer than 8 bytes (note: 3 bytes of the name are reserved for the extinction). However, this problem is solved by setting a flag indicating that and the name is saved in another section. 
 
   the directory entries are consecutive, and the last entry has a 0x0 in the first character in the file's name. 
   
