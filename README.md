@@ -86,8 +86,8 @@ this program only supports <i>EXT 2</i> and <i>FAT 16</i> file systems.
   This program allowes you to check and modify the information of an Ext2 or a FAT16 file system. As explained before, you can show meta information about the file system, search for a file in the file system, or delete a specific file.
 
   this is the class diagam of the project:
+  ![image class diagram](https://user-images.githubusercontent.com/45884568/119272505-8ad56a80-bc06-11eb-9f52-0b4207814148.png)
 
-  ![image class diagram]()
 
   
 
