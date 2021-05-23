@@ -22,7 +22,7 @@
   ./shooter /info <path to file system> 
 ```
 
-  - /find : checks if a file exists in the filesystem recursively and returns its size incase it exisits.
+  - /find : checks if a file exists in the filesystem recursively and returns its size incase it exists.
 
 ```
   ./shooter /find <path to file system> <filename>
@@ -39,11 +39,11 @@
 this program only supports <i>EXT 2</i> and <i>FAT 16</i> file systems.
 
 <h3>Ext 2</h3>
-  Ext2 (the second extended file system) is a file system for the linux kernel. The data in this file system is devided into blocks, these blocks are then grouped into groups. 
-  The main structure that stores the files informations and enteries is known as inode (node index). each inode contains pointers to the blocks of the file system that stores the data of the file or directory. 
+  Ext2 (the second extended file system) is a file system for the Linux kernel. The data in this file system is divided into blocks, these blocks are then grouped into groups. 
+  The main structure that stores the files information and entries is known as inode (node index). each inode contains pointers to the blocks of the file system that stores the data of the file or directory. 
 
   
-  The bloks and groups are structured as shown in the image below:
+  The blocks and groups are structured as shown in the image below:
   
   ![image of Ext 2 sample groups/blocks structure](https://user-images.githubusercontent.com/45884568/119158873-f8429900-ba56-11eb-9711-598e5b0e817e.png)
 
@@ -51,7 +51,7 @@ this program only supports <i>EXT 2</i> and <i>FAT 16</i> file systems.
 
   in the superblock you can find general information about the filesystem. For instance, you can find block sizes, total number of blocks, the number of inodes, or the number of  the first inode. 
 
-  The Inode table contains indoe entries, each inode entry is 124 bytes. each of these entries contains the information of a file, direcotry, or simbolic link that this inode points to. these are the information stored in each inode:
+  The Inode table contains inode entries, each inode entry is 124 bytes. each of these entries contains the information of a file, directory, or symbolic link that this inode points to. these are the information stored in each inode:
 
   ![image of the information stored in an inode](https://user-images.githubusercontent.com/45884568/119240304-fa881e80-bb4e-11eb-8720-36cef4d181af.png)
 
@@ -59,12 +59,25 @@ this program only supports <i>EXT 2</i> and <i>FAT 16</i> file systems.
   
   ![image of a directory entry](https://user-images.githubusercontent.com/45884568/119240323-1986b080-bb4f-11eb-9725-964860ba7519.png)
 
-  each block stores as many sequential directory enteries as it can fit. If the entries don't fit in one block, then the reset of the entries will be stored in another block which you can locate using the inode representing this directory.
+  each block stores as many sequential directory entries as it can fit. If the entries don't fit in one block, then the reset of the entries will be stored in another block which you can locate using the inode representing this directory.
 
-  
+
 
 
 <h3>FAT 16</h3>
+  FAT (File Allocation Table) is a type of legacy file systems. FAT offers good performance but isn't very scalable and reliable. The 16 in the name refers to the number of bits used to identify each allocation unit (known as cluster).
+
+  Fat file systems are divided into 4 main regions as shown in the figure below:
+    ![image of a the FAT regions]()
+
+  The reserved region contains the boot sector and BPB (BIOS Parameter Block). these blocks contain important information about he file system like the number FATs, the size of the cluster, or the number of entries in the root directory. 
+
+  the root directory entry is located in the root directory region. each directory/file entry follows the same format as shown below: 
+    ![image of a the File structure]()
+
+  there is a limitation presented with this structure as it doesn't allow files with a name greater than 8 bytes (as 3 bytes of the name are reserved for the extinction). However, this problem is solved by setting a flag indicating that the file name is longer than 8 bytes and the name is saved in another section. 
+
+  the directory entries are consecutive, and the last entry has a 0x0 in the first character in the file's name. 
   
 
 3. Explanation of the practice
