@@ -80,21 +80,24 @@ this program only supports <i>EXT 2</i> and <i>FAT 16</i> file systems.
   there is a limitation presented with this structure as it doesn't allow files with a name longer than 8 bytes (note: 3 bytes of the name are reserved for the extinction). However, this problem is solved by setting a flag indicating that and the name is saved in another section. 
 
   the directory entries are consecutive, and the last entry has a 0x0 in the first character in the file's name. 
-  
-
+ 
 <h3>Explination of the project</h3>
-  This program allowes you to check and modify the information of an Ext2 or a FAT16 file system. As explained before, you can show meta information about the file system, search for a file in the file system, or delete a specific file.
+  This program checks and modifies the information of an Ext2 or a FAT16 file system. As explained before, you can show meta information about the file system, search for a file in the file system, or delete a specific file.
 
   this is the class diagam of the project:
   ![image class diagram](https://user-images.githubusercontent.com/45884568/119272505-8ad56a80-bc06-11eb-9f52-0b4207814148.png)
 
+  the Directory manager is the class that controls the main functionality of the system. When you create an instance of this class you need to provid it with a path to the file system. Then, it will check that file system and create a FAT or an Ext2 instanse dependingly. 
 
-  
+  both files systems implement the abstract class "FileSystem."
 
-  bellow you will find a detailed explination of the functionalities:
+  the file reader class stores an fstream object and returns a pointer to it so other classes can use it.
+
+  the main functionalities implemented in this program are:  
 
   <h4>/info</h4>
-  
+      this functionality will read the meta data of both file systems. To be able to store this data I created a struture in both file system that holds the necessery data.
+      in order to test the functionalitiy of this option, I had to open the file system in a hex editor and then read the bytes in the offsets that I need to check and compare the value with the values I read using the program.
   <h4>/find</h4>
 
   <h4>/delete</h4>
