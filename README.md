@@ -81,7 +81,7 @@ this program only supports <i>EXT 2</i> and <i>FAT 16</i> file systems.
 
   the directory entries are consecutive, and the last entry has a 0x0 in the first character in the file's name. 
  
-<h3>Explination of the project</h3>
+<h3>Explanation of the project</h3>
   This program checks and modifies the information of an Ext2, or a FAT16 file system. As explained before, you can show meta information about the file system, search for a file in the file system, or delete a specific file.
 
   this is the class diagam of the project:
@@ -106,26 +106,45 @@ this program only supports <i>EXT 2</i> and <i>FAT 16</i> file systems.
         this functionality allows the user to recursively search for a file in the file system. 
         In order to do this I had to explore all the files in the root directory and all of it's sub-directories
         looking for the file. this functionality did not require any additional data structures.
+        <br><br>
+        In FAT16, I first go to the begging to the Root region and start reading the files in it following the file entry structure in FAT16.
+        if the file had the directory flag set (the entry DIR_Attr is equal to 16), then I will move to the offset indicated by the entry DIR_FstClusLO.
+        Moreover, as I make the function recursively I am able to run the same function but instead of having the root region as my starting offset 
+        I add the first cluster I read as the offset.
+        <br><br>
+        For Ext2, the process was a little different as Ext works with inodes. At first I navigated to the root inode (inode 2) and 
+        then I started looking at the blocks that this inode points to. in each of those blocks there are many file entries, 
+        so I check each file and if a file type indicated by the entry is set to Directory then I recursively look in that 
+        directory but this time feeding the function the directory inode as the starting inode (which is stored in the inode entry of the file)    
+        <br><br>
         in order to test the functionality of this option I mounted the file system and checked the file tree. 
         After that I search for the different files in the file system. Moreover, I tried adding files inside some nested
         directories and look for them using the program.
 
   <h4>/delete</h4>
         in order to delete a file I had to first find it, after that depending on the file system I removed the file in a different method.
-        for FAT16 in order to remove a file I had to mark the entry with 0xE5 at the first character of the name. 
-        this will result in ignoring this entry next time you read the file.
+        <br><br>
+        for FAT16 in order to remove a file I had to mark the entry by putting a 0xE5 at the first character of the name. 
+        this will result in ignoring this entry next time you read the file system.
+        <br><br>
         However, in EXT2 in order to delete a file I had to increase the size of the preceding file entry to include the file in it. 
         Moreover, if the file you want to delete was the first entry, then I had to copy the information of the following file into the 
-        current file, then repeat the same process to delete the file that follows.
+        current file, then repeat the same process to delete the second file by increasing the record length of the current file.
+        <br><br>        
         In order to test the functionality of this option, I tried deleting some files then mounting the file system to check that they are actually deleted.
-        Also, to test the EXT2 deleting a files from the blocks greater than the first, I found a file system with files that have long names. 
-        This resulted in the entries being in the second and third blocks.After that I tried deleting them to make sure the algorithm worked correctly. 
+        Moreover, in order to test the file deletion in Ext for files that used up more than one block, I used a file with lots of long-named-files 
+        which resulted in the inode needing 3 blocks to store this data.
+        Then I tried deleting those file to make sure the algorithm worked correctly.
 
 
-(b) Design: explanation of how you designed and structured.
-(c) Data structures used and their justification.
-(d) Tests performed.
-(e) Observed problems and how they have been solved.
-(f) Temporal estimation.
-4. Explanation and assessment of the GIT.
-5. General conclusions.
+<h3>Observed problems</h3>
+
+
+<h3>temporal estimation</h3>
+
+
+
+<h3>Explanation and assessment of GIT</h3>
+
+
+<h3>Conclusions</h3>
