@@ -144,8 +144,15 @@ this program only supports <i>EXT 2</i> and <i>FAT 16</i> file systems.
 
 ![image time consumed in the practice](https://user-images.githubusercontent.com/45884568/119540057-42948480-bd8d-11eb-8811-18e097a26eea.png)
 
+the first phase took me the longest out of all of them, but that is because it involved the designing of the classes and the initial set up of the project.
+After everything was set up I solving the phases didn't take much time. 
+Moreover, phase 2 was the most challenging even if it wasn't the most time consuming. This is because I had to spend some time understanding 
+how each of the file systems worked, and thus how I should approach the search process in each.
 
 <h3>Explanation and assessment of GIT</h3>
 
+I divided the git into 3 main branches: Main, FAT, and Ext. The FAT and Ext branches held the currently in development files for each practice. 
+once I was done with each I created a pull request to update the main branch. Moreover, for each phase I created a branch to hold the 
+final files of that specific phase.
 
 <h3>Conclusions</h3>
