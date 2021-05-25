@@ -101,12 +101,27 @@ this program only supports <i>EXT 2</i> and <i>FAT 16</i> file systems.
       in order to test the functionality of this option, I had to open the file system in a hex editor
         and then read the bytes in the offsets needed, then comparing the value with the 
         values I read using the program I was able to determine the correctness of the results.
+
   <h4>/find</h4>
-        
-                
+        this functionality allows the user to recursively search for a file in the file system. 
+        In order to do this I had to explore all the files in the root directory and all of it's sub-directories
+        looking for the file. this functionality did not require any additional data structures.
+        in order to test the functionality of this option I mounted the file system and checked the file tree. 
+        After that I search for the different files in the file system. Moreover, I tried adding files inside some nested
+        directories and look for them using the program.
 
   <h4>/delete</h4>
-  
+        in order to delete a file I had to first find it, after that depending on the file system I removed the file in a different method.
+        for FAT16 in order to remove a file I had to mark the entry with 0xE5 at the first character of the name. 
+        this will result in ignoring this entry next time you read the file.
+        However, in EXT2 in order to delete a file I had to increase the size of the preceding file entry to include the file in it. 
+        Moreover, if the file you want to delete was the first entry, then I had to copy the information of the following file into the 
+        current file, then repeat the same process to delete the file that follows.
+        In order to test the functionality of this option, I tried deleting some files then mounting the file system to check that they are actually deleted.
+        Also, to test the EXT2 deleting a files from the blocks greater than the first, I found a file system with files that have long names. 
+        This resulted in the entries being in the second and third blocks.After that I tried deleting them to make sure the algorithm worked correctly. 
+
+
 (b) Design: explanation of how you designed and structured.
 (c) Data structures used and their justification.
 (d) Tests performed.
