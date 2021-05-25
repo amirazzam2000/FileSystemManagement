@@ -139,6 +139,21 @@ this program only supports <i>EXT 2</i> and <i>FAT 16</i> file systems.
 
 <h3>Observed problems</h3>
 
+phase 1: <br>
+the main problem I faced with this phase is to find the attributes that I had to read. 
+It was a very tedious task but I managed to find the offsets at the end.
+
+phase 2: <br>
+the main problem I had in this phase is not considering directories. Which resulted in the program finding directories as if they were normal files.
+
+phase 3: <br>
+In this phase I had a problem finding the directory given a specific offset in both Ext and FAT, as I had to do some calculations in order to locate the entry I need to check.
+I fixed this by looking more in the documentation of both file systems as it had the calculations that I needed to carry out in order to locate the specific entry.
+
+phase 4: <br>
+In this phase I was able to find some issues that the solutions of the previous phases didn't account for. For example, in FAT I realised that I was not skipping the entries that started with 0x5E. 
+Moreover, in Ext2 I was only checking files in the first block and disregarding the other blocks as I was not offsetting correctly. 
+
 
 <h3>temporal estimation</h3>
 
@@ -156,3 +171,16 @@ once I was done with each I created a pull request to update the main branch. Mo
 final files of that specific phase.
 
 <h3>Conclusions</h3>
+This project was really interesting and fun. The technical aspect of the project was not very challenging, 
+however, understanding how each file system works was the interesting part. 
+I got to see and understand the differences between the file systems which made me realize the pros and cons of each of them.
+
+Analyzing the use case of each file system and the drawbacks of each was interesting, as I got to see why some operating
+systems made the decisions that they have made in selecting one file system over the other.
+I, also, got to practice and work a little more with git which was interesting as I didn't use to work with multiple branches before.
+
+It is unlikely that I would have to develop this in another project in the future. 
+Nevertheless, I think that it is very important that I have learned this, as I now have a much deeper understanding of file systems and how the computer low level functionalities work.
+Moreover, even if I don't have to work with a FAT or EXT file systems, the structure of those file systems could be integrated into future projects.
+
+Overall, the practice was a very good learning experience.
