@@ -142,6 +142,7 @@ this program only supports <i>EXT 2</i> and <i>FAT 16</i> file systems.
 
 <h3>temporal estimation</h3>
 
+![image time consumed in the practice](https://user-images.githubusercontent.com/45884568/119540057-42948480-bd8d-11eb-8811-18e097a26eea.png)
 
 
 <h3>Explanation and assessment of GIT</h3>
