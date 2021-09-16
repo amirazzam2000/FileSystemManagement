@@ -90,7 +90,7 @@ public:
     static int const EXT2_FT_DIR = 2; //  the file type
 
 
-    //methodes
+    //methods
     virtual ~Ext2();
     virtual void parseData(FileReader * freader);
     virtual void printFileSystemInfo();
